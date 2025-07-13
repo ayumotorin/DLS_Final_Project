@@ -12,8 +12,6 @@ import rasterio
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 MODEL_PATH = './model.pth'
-TEST_IMAGE_PATH = './data/val/images/vienna11.tif'
-TRUE_MASK_PATH = './data/val/gt/vienna11.tif'
 PATCH_SIZE = 512  # Размер патча, на котором обучалась модель
 STRIDE = 512
 THRESHOLD = 0.5
@@ -156,7 +154,7 @@ if uploaded_file is not None:
     try:
         # --- Шаг 1: Расчет GSD и площади пикселя ---
         with st.spinner('Анализ геопривязки...'):
-            pixel_area = get_pixel_area("temp_image.tif")
+            pixel_area = get_pixel_size_m2("temp_image.tif")
         
         if pixel_area is None:
             st.error("Не удалось определить масштаб из метаданных файла. Пожалуйста, убедитесь, что файл является геопривязанным GeoTIFF.")
@@ -191,10 +189,10 @@ if uploaded_file is not None:
         col1, col2 = st.columns(2)
         
         with col1:
-            st.image(image_rgb, caption='Оригинальное изображение', use_column_width=True)
+            st.image(image_rgb, caption='Оригинальное изображение', use_container_width=True)
         
         with col2:
-            st.image(binary_mask * 255, caption='Предсказанная маска застройки', use_column_width=True)
+            st.image(binary_mask * 255, caption='Предсказанная маска застройки', use_container_width=True)
             
     except Exception as e:
         st.error(f"Произошла ошибка во время обработки: {e}")
